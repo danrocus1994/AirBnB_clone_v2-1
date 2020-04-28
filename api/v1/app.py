@@ -6,12 +6,20 @@ Flask Application server with view Blueprint
 
 from models import storage
 from api.v1.views import app_views
-from flask import Flask
+from flask import Flask, jsonify
 import os
 
 
 app = Flask(__name__)
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """
+    Defines not found json response
+    """
+    print("Handling Error")
+    return jsonify(error="Not found"), 404
 
 @app.teardown_appcontext
 def teardown_db(exception):
