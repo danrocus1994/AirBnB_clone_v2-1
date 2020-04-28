@@ -21,6 +21,7 @@ def page_not_found(e):
     print("Handling Error")
     return jsonify(error="Not found"), 404
 
+
 @app.teardown_appcontext
 def teardown_db(exception):
     """closes the storage on teardown"""
