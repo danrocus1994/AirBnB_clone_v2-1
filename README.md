@@ -65,6 +65,17 @@ Classes inherited from Base Model:
 * `def save(self)` - serializes __objects to the JSON file (path: __file_path)
 * ` def reload(self)` -  deserializes the JSON file to __objects
 
+[db_storage.py](/models/engine/db_storage.py) - Uses [SQLAlchemy](https://www.sqlalchemy.org/) ORM engine for sql transactions
+* `def all(self)` - returns the dictionary __objects
+* `def new(self, obj)` - adds the model instance to the db with the actual Session
+* `def save(self)` - makes a commit with the actual Session
+* `def reload(self)` - generate a new Session for the engine transactions
+* `def delete(self)` - removes an element with the actual Session
+* `def close(self)` - remove the actual Session
+
+#### `/api` directory contains Flask application configuration files used in the AirBnB_clone_v3
+
+
 #### `/tests` directory contains all unit test cases for this project:
 [/test_models/test_base_model.py](/tests/test_models/test_base_model.py) - Contains the TestBaseModel and TestBaseModelDocs classes
 TestBaseModelDocs class:
