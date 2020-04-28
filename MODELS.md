@@ -1,4 +1,4 @@
-### User
+### User [user.py](/models/user.py)
 
 * email: string 
 * password: string 
@@ -7,22 +7,22 @@
 * places: relationship
 * reviews: relationship
 
-## State
+## State [state.py](/models/state.py)
 
 * name: string
 * cities: Cities related with State
 
-## City
+## City [city.py](/models/city.py)
 
 * state_id: string
 * name: string
 * places: relationship
 
-## Amenity
+## Amenity [amenity.py](/models/amenity.py)
 
 * name: string
 
-## Place
+## Place [place.py](/models/place.py)
 
 * city_id: string
 * user_id: string
@@ -37,7 +37,7 @@
 * amenities: replationship
 
 
-## Review
+## Review [review.py](/models/review.py)
 
 * place_id: string
 * user_id: string
