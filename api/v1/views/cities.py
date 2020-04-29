@@ -8,29 +8,24 @@ from models import storage
 from models.state import State
 from models.city import City
 from api.v1.views import app_views
-from flask import jsonify, make_response, request
+from flask import jsonify, make_response, request, abort
 import json
 
 
-@app_views.route('/states/<state_id>/cities', methods=['GET'])
+@app_views.route('/states/<state_id>/cities',
+                 strict_slashes=False,
+                 methods=['GET'])
 def cities(state_id):
     """
     This route return a list of cities given by the status id
     """
     state = storage.get(State, state_id)
     if state is None:
-        return jsonify(error="Not found"), 404
-    cities = storage.all(City)
-    cities_list = []
-    for key, city in cities.items():
-        if city.state_id == state_id:
-            cities_list.append(city.to_dict())
-    resp = make_response(json.dumps(cities_list, sort_keys=True), 200)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+        abort(404)
+    return jsonify([cit.to_dict() for cit in state.cities])
 
 
-@app_views.route('/cities/<city_id>', methods=['GET'])
+@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
 def single_city(city_id):
     """
     Return the Json of a City by its id
@@ -44,7 +39,7 @@ def single_city(city_id):
     return resp
 
 
-@app_views.route('/cities/<city_id>', methods=['DELETE'])
+@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['DELETE'])
 def remove_city(city_id):
     """
     Handles the State removtion route,
@@ -58,7 +53,9 @@ def remove_city(city_id):
     return resp
 
 
-@app_views.route('/states/<state_id>/cities', methods=['POST'])
+@app_views.route('/states/<state_id>/cities',
+                 strict_slashes=False,
+                 methods=['POST'])
 def create_city(state_id):
     """
     Creates a new city in the State
