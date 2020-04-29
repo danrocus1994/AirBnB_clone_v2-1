@@ -10,7 +10,9 @@ from flask import jsonify, make_response, abort, request
 import json
 
 
-@app_views.route('/amenities', methods=['GET'])
+@app_views.route('/amenities',
+                 strict_slashes=False,
+                 methods=['GET'])
 def amenities():
     """
     This route retrieves the list of all amenity objects
@@ -22,7 +24,9 @@ def amenities():
     return jsonify(amenities_list), 200
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET'])
+@app_views.route('/amenities/<amenity_id>',
+                 strict_slashes=False,
+                 methods=['GET'])
 def amenity_by_id(amenity_id):
     """
     This route retrieves a amenity object
@@ -34,7 +38,9 @@ def amenity_by_id(amenity_id):
     return jsonify(amenity.to_dict()), 200
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['DELETE'])
+@app_views.route('/amenities/<amenity_id>',
+                 strict_slashes=False,
+                 methods=['DELETE'])
 def del_amenity(amenity_id):
     """
     This route delete a amenity
@@ -48,7 +54,9 @@ def del_amenity(amenity_id):
     return {}, 200
 
 
-@app_views.route('/amenities', methods=['POST'])
+@app_views.route('/amenities',
+                 strict_slashes=False,
+                 methods=['POST'])
 def create_amenity():
     """
     This route create a new amenity
@@ -66,7 +74,9 @@ def create_amenity():
     return jsonify(error="Not a JSON"), 400
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['PUT'])
+@app_views.route('/amenities/<amenity_id>',
+                 strict_slashes=False,
+                 methods=['PUT'])
 def update_amenity(amenity_id):
     """
     This route update a amenity
@@ -79,7 +89,7 @@ def update_amenity(amenity_id):
         return jsonify(error="Not a JSON"), 400
     req = request.get_json()
     for key, value in req.items():
-        if key != 'id' or key != 'created_at' or key != 'updated_at':
+        if key != 'id' and key != 'created_at' and key != 'updated_at':
             setattr(amenity, key, value)
     storage.save()
     return jsonify(amenity.to_dict()), 200
