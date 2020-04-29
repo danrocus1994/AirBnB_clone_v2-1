@@ -28,3 +28,17 @@ def cities(state_id):
     resp = make_response(json.dumps(cities_list, sort_keys=True), 200)
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
+
+@app_views.route('/cities/<city_id>', methods=['GET'])
+def single_city(city_id):
+    """
+    Return the Json of a City by its id
+    """
+    city = storage.get(City, city_id)
+    if city is None:
+        return jsonify(error="Not found"), 404
+    city = city.to_dict()
+    resp = make_response(city, 200)
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
