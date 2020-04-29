@@ -26,3 +26,16 @@ def cities(state_id):
         abort(404)
     return Response(json.dumps(cities_list, indent=2, sort_keys=True), 200,
                     mimetype='application/json')
+
+
+@app_views.route('/cities/<city_id>', methods=['GET'])
+def single_city(city_id):
+    """
+    Return the Json of a City by its id
+    """
+    city = storage.get(City, city_id)
+    if city is None:
+        abort(404)
+    city = city.to_dict()
+    return Response(json.dumps(city, indent=2, sort_keys=True), 200,
+                    mimetype='application/json')
