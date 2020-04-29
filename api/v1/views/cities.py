@@ -24,7 +24,7 @@ def cities(state_id):
             cities_list.append(city.to_dict())
     if len(cities_list) == 0:
         abort(404)
-    return Response(json.dumps(cities_list, indent=2, sort_keys=True), 200
+    return Response(json.dumps(cities_list, indent=2, sort_keys=True), 200,
                     mimetype='application/json')
 
 
