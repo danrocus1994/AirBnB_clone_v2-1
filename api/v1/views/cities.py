@@ -37,5 +37,4 @@ def single_city(city_id):
     if city is None:
         abort(404)
     city = city.to_dict()
-    return Response(json.dumps(city, indent=2, sort_keys=True), 200,
-                    mimetype='application/json')
+    return jsonify(city), 200
