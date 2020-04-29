@@ -53,8 +53,6 @@ def remove_city(city_id):
     city = storage.get(City, city_id)
     if city is None:
         return jsonify(error="Not found"), 404
-    #storage.delete(city)
-    #storage.save()
     resp = make_response(json.dumps({}), 200)
     resp.headers['Content-Type'] = 'application/json'
     return resp
