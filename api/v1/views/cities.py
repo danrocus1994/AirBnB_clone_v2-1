@@ -30,9 +30,9 @@ def single_city(city_id):
     Return the Json of a City by its id
     """
     citi = storage.get(City, city_id)
-    if citi is None:
-        abort(404)
-    return jsonify(citi.to_dict())
+    if citi is not None:
+        return jsonify(citi.to_dict())
+    abort(404)
 
 
 @app_views.route("/cities/<city_id>", strict_slashes=False, methods=['DELETE'])
@@ -42,11 +42,11 @@ def remove_city(city_id):
     takes and id and uses storage to remove it
     """
     citi = storage.get(City, city_id)
-    if citi is None:
-        abort(404)
-    storage.delete(citi)
-    storage.save()
-    return jsonify({}), 200
+    if citi is notNone:
+        storage.delete(citi)
+        storage.save()
+        return jsonify({}), 200
+    abort(404)
 
 
 @app_views.route("/states/<state_id>/cities",
@@ -64,7 +64,7 @@ def create_city(state_id):
     if not req:
         abort(400, "Not a JSON")
     if "name" not in req:
-        abort("Missing name", 400)
+        abort(400, "Missing name")
     n_city = City(**req)
     n_city.state_id = state_id
     storage.new(n_city)
@@ -82,9 +82,9 @@ def update_city(city_id):
     if not req:
         abort(400, "Not a JSON")
     city = storage.get(City, city_id)
-    if city is None:
-        abort(404)
-    for key in req.keys():
-        setattr(city, key, req[key])
-    storage.save()
-    return jsonify(city.to_dict()), 200
+    if city is not None:
+        for key in req.keys():
+            setattr(city, key, req[key])
+        storage.save()
+        return jsonify(city.to_dict()), 200
+    abort(404)
