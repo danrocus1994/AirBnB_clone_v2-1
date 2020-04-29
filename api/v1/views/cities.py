@@ -73,9 +73,7 @@ def create_city(state_id):
     if not "name" in req:
         return jsonify(error="Missing name"), 400
     req["state_id"] = state_id
-    print(req)
     city = City(**req)
-    print(city, type(city))
     storage.new(city)
     storage.save()
     resp = make_response(city.to_dict(), 201)
