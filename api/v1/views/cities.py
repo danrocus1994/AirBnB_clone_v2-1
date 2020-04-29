@@ -8,7 +8,7 @@ from models import storage
 from models.state import State
 from models.city import City
 from api.v1.views import app_views
-from flask import jsonify, make_response, abort, request
+from flask import jsonify, make_response, request
 import json
 
 
@@ -25,8 +25,6 @@ def cities(state_id):
     for key, city in cities.items():
         if city.state_id == state_id:
             cities_list.append(city.to_dict())
-    if len(cities_list) == 0:
-        return jsonify(error="Not found"), 404
     resp = make_response(json.dumps(cities_list, sort_keys=True), 200)
     resp.headers['Content-Type'] = 'application/json'
     return resp
