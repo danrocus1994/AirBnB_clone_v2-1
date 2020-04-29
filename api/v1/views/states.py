@@ -64,7 +64,7 @@ def create_state():
     """
     if request.is_json:
         req = request.get_json()
-        if req['name']:
+        if 'name' in req:
             new_state = State(**req)
             storage.new(new_state)
             storage.save()
