@@ -25,7 +25,8 @@ def cities(state_id):
     for key, city in cities.items():
         if city.state_id == state_id:
             cities_list.append(city.to_dict())
-    print(cities_list)
+    if len(cities_list) == 0:
+        return jsonify(error="Not found"), 404
     resp = make_response(json.dumps(cities_list, sort_keys=True), 200)
     resp.headers['Content-Type'] = 'application/json'
     return resp
