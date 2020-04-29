@@ -41,7 +41,7 @@ def single_city(city_id):
     if city is None:
         print("City is None")
         abort(404)
-    city = city.to_dict()    print(city)
+    city = city.to_dict()
     return Response(json.dumps(city, indent=2, sort_keys=True), 200)
 
 
