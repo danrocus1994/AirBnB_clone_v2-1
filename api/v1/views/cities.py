@@ -25,8 +25,7 @@ def cities(state_id):
     for key, city in cities.items():
         if city.state_id == state_id:
             cities_list.append(city.to_dict())
-    response = make_response(json.dumps(cities_list,
-                                        indent=2,
-                                        sort_keys=True), 200)
-    response.headers['Content-Type'] = 'application/json'
-    return response
+    print(cities_list)
+    resp = make_response(json.dumps(cities_list, sort_keys=True), 200)
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
