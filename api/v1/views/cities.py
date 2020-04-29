@@ -42,7 +42,7 @@ def remove_city(city_id):
     takes and id and uses storage to remove it
     """
     citi = storage.get(City, city_id)
-    if citi is notNone:
+    if citi is not None:
         storage.delete(citi)
         storage.save()
         return jsonify({}), 200
@@ -61,10 +61,10 @@ def create_city(state_id):
     if state is None:
         abort(404)
     req = request.get_json()
-    if not req:
-        abort(400, "Not a JSON")
+    if not req or type(req) != dict:
+        return jsonify(error="Not a JSON"), 400
     if "name" not in req:
-        abort(400, "Missing name")
+        return jsonify(error="Missing name"), 400
     n_city = City(**req)
     n_city.state_id = state_id
     storage.new(n_city)
