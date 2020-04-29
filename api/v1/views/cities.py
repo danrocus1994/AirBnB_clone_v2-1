@@ -29,13 +29,16 @@ def cities(state_id):
                     mimetype='application/json')
 
 
-@app_views.route('/cities/<city_id>', methods=['GET'])
-def single_city(city_id):
+@app_views.route('/cities/<city_id>', methods=['DELETE'])
+def remove_city(city_id):
     """
-    Return the Json of a City by its id
+    Handles the State removtion route,
+    takes and id and uses storage to remove it
     """
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
-    city = city.to_dict()
-    return jsonify(city), 200
+    storage.delete(city)
+    storage.save()
+    return Response(json.dumps({}, indent=2, sort_keys=True), 200,
+                    mimetype='application/json')
