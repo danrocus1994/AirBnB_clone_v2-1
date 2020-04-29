@@ -70,7 +70,7 @@ def create_city(state_id):
     req = request.get_json()
     if req is None or type(req) != dict:
         return jsonify(error="Not a JSON"), 400
-    if not "name" in req:
+    if "name" not in req:
         return jsonify(error="Missing name"), 400
     req["state_id"] = state_id
     city = City(**req)
