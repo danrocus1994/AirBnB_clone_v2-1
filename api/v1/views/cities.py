@@ -17,15 +17,19 @@ def cities(state_id):
     """
     This route return a list of cities given by the status id
     """
+    state = storage.get(State, state_id)
+    if state is None:
+        abort(404)
     cities = storage.all(City)
     cities_list = []
     for key, city in cities.items():
         if city.state_id == state_id:
             cities_list.append(city.to_dict())
-    if len(cities_list) == 0:
-        abort(404)
-    return Response(json.dumps(cities_list, indent=2, sort_keys=True), 200,
+    js = json.dumps(cities_list)
+    print(type(js), js)
+    resp = Response(json.dumps(cities_list, indent=2, sort_keys=True), 200,
                     mimetype='application/json')
+    return resp
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'])
@@ -37,4 +41,6 @@ def single_city(city_id):
     if city is None:
         abort(404)
     city = city.to_dict()
-    return jsonify(city), 200
+    resp = Response(json.dumps(city, indent=2, sort_keys=True), 200,
+                    mimetype='application/json')
+    return resp
