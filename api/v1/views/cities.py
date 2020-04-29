@@ -29,7 +29,7 @@ def cities(state_id):
                     mimetype='application/json')
 
 
-@app_views.route('/cities/<city_id>', method='GET')
+@app_views.route('/cities/<city_id>', methods=['GET'])
 def single_city(city_id):
     """
     Return the Json of a City by its id
