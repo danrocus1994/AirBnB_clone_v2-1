@@ -3,6 +3,7 @@
 Index route for AirBnB clone v3 API v1
 """
 
+
 from models import storage
 from models.state import State
 from models.city import City
