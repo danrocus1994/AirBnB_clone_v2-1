@@ -56,3 +56,28 @@ def remove_city(city_id):
     resp = make_response(json.dumps({}), 200)
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
+
+@app_views.route('/states/<state_id>/cities', methods=['POST'])
+def create_city(state_id):
+    """
+    Creates a new city in the State
+    given by state_id
+    """
+    state = storage.get(State, state_id)
+    if state is None:
+        abort(404)
+    req = request.get_json()
+    if req is None or type(req) != dict:
+        return jsonify(error="Not a JSON"), 400
+    if not "name" in req:
+        return jsonify(error="Missing name"), 400
+    req["state_id"] = state_id
+    print(req)
+    city = City(**req)
+    print(city, type(city))
+    storage.new(city)
+    storage.save()
+    resp = make_response(city.to_dict(), 201)
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
