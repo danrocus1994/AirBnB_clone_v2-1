@@ -10,7 +10,9 @@ from flask import jsonify, make_response, abort, request
 import json
 
 
-@app_views.route('/states', methods=['GET'])
+@app_views.route('/states',
+                 strict_slashes=False,
+                 methods=['GET'])
 def states():
     """
     This route retrieves the list of all State objects
@@ -22,7 +24,9 @@ def states():
     return jsonify(states_list), 200
 
 
-@app_views.route('/states/<state_id>', methods=['GET'])
+@app_views.route('/states/<state_id>',
+                 strict_slashes=False,
+                 methods=['GET'])
 def state_by_id(state_id):
     """
     This route retrieves a State object
@@ -34,7 +38,9 @@ def state_by_id(state_id):
     return jsonify(state.to_dict()), 200
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'])
+@app_views.route('/states/<state_id>',
+                 strict_slashes=False,
+                 methods=['DELETE'])
 def del_state(state_id):
     """
     This route delete a state
@@ -48,7 +54,9 @@ def del_state(state_id):
     return {}, 200
 
 
-@app_views.route('/states', methods=['POST'])
+@app_views.route('/states',
+                 strict_slashes=False,
+                 methods=['POST'])
 def create_state():
     """
     This route create a new state
@@ -66,7 +74,9 @@ def create_state():
     return jsonify(error="Not a JSON"), 400
 
 
-@app_views.route('/states/<state_id>', methods=['PUT'])
+@app_views.route('/states/<state_id>',
+                 strict_slashes=False,
+                 methods=['PUT'])
 def update_state(state_id):
     """
     This route update a state
@@ -78,7 +88,7 @@ def update_state(state_id):
         return jsonify(error="Not a JSON"), 400
     req = request.get_json()
     for key, value in req.items():
-        if key != 'id' or key != 'created_at' or key != 'updated_at':
+        if key != 'id' and key != 'created_at' and key != 'updated_at':
             setattr(state, key, value)
     storage.save()
     return jsonify(state.to_dict()), 200
