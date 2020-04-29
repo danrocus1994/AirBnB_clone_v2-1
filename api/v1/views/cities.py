@@ -25,28 +25,7 @@ def cities(state_id):
     for key, city in cities.items():
         if city.state_id == state_id:
             cities_list.append(city.to_dict())
-    js = json.dumps(cities_list)
-    print(type(js), js)
-    resp = Response(json.loads(json.dumps(cities_list,
-                                          indent=2,
-                                          sort_keys=True)),
-                    200,
-                    mimetype='application/json')
-    return resp
-
-
-@app_views.route('/cities/<city_id>', methods=['GET'])
-def single_city(city_id):
-    """
-    Return the Json of a City by its id
-    """
-    city = storage.get(City, city_id)
-    if city is None:
+    if len(cities_list) == 0:
         abort(404)
-    city = city.to_dict()
-    resp = Response(json.loads(json.dumps(city,
-                                          indent=2,
-                                          sort_keys=True)),
-                    200,
+    return Response(json.dumps(cities_list, indent=2, sort_keys=True), 200,
                     mimetype='application/json')
-    return resp
