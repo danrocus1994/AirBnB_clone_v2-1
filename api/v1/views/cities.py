@@ -4,12 +4,11 @@ Index route for AirBnB clone v3 API v1
 """
 
 
-from models import storage
-from models.state import State
-from models.city import City
 from api.v1.views import app_views
-from flask import jsonify, make_response, request, abort
-import json
+from models import storage
+from models.city import City
+from models.state import State
+from flask import jsonify, request, abort
 
 
 @app_views.route("/states/<state_id>/cities",
@@ -20,9 +19,9 @@ def cities(state_id):
     This route return a list of cities given by the status id
     """
     state_obj = storage.get(State, state_id)
-    if state_obj is None:
-        abort(404)
-    return jsonify([cit.to_dict() for cit in state_obj.cities])
+    if state_obj is not None:
+        return jsonify([cit.to_dict() for cit in state_obj.cities])
+    abort(404)
 
 
 @app_views.route("/cities/<city_id>", strict_slashes=False, methods=['GET'])
