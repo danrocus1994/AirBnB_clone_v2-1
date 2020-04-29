@@ -27,7 +27,10 @@ def cities(state_id):
             cities_list.append(city.to_dict())
     js = json.dumps(cities_list)
     print(type(js), js)
-    resp = Response(json.dumps(cities_list, indent=2, sort_keys=True), 200,
+    resp = Response(json.loads(json.dumps(cities_list,
+                                          indent=2,
+                                          sort_keys=True)),
+                    200,
                     mimetype='application/json')
     return resp
 
@@ -41,6 +44,9 @@ def single_city(city_id):
     if city is None:
         abort(404)
     city = city.to_dict()
-    resp = Response(json.dumps(city, indent=2, sort_keys=True), 200,
+    resp = Response(json.loads(json.dumps(city,
+                                          indent=2,
+                                          sort_keys=True)),
+                    200,
                     mimetype='application/json')
     return resp
