@@ -39,4 +39,3 @@ def single_city(city_id):
         abort(404)
     city = city.to_dict()
     return jsonify(city), 200
-
