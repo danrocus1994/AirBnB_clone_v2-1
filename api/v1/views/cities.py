@@ -19,10 +19,10 @@ def cities(state_id):
     """
     This route return a list of cities given by the status id
     """
-    state = storage.get(State, state_id)
-    if state is None:
+    state_obj = storage.get(State, state_id)
+    if state_obj is None:
         abort(404)
-    return jsonify([cit.to_dict() for cit in state.cities])
+    return jsonify([cit.to_dict() for cit in state_obj.cities])
 
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
@@ -30,8 +30,8 @@ def single_city(city_id):
     """
     Return the Json of a City by its id
     """
-    city = storage.get(City, city_id)
-    if city is None:
+    citi = storage.get(City, city_id)
+    if citi is None:
         abort(404)
     return jsonify(city.to_dict())
 
@@ -39,15 +39,14 @@ def single_city(city_id):
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['DELETE'])
 def remove_city(city_id):
     """
-    Handles the State removtion route,
+    Handles the State remotion route,
     takes and id and uses storage to remove it
     """
-    city = storage.get(City, city_id)
-    if city is None:
-        return jsonify(error="Not found"), 404
-    resp = make_response(json.dumps({}), 200)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+    citi = storage.get(City, city_id)
+    if citi is None:
+        abort(404)
+    storage.delete(citi)
+    return jsonify({}), 200
 
 
 @app_views.route('/states/<state_id>/cities',
@@ -62,14 +61,30 @@ def create_city(state_id):
     if state is None:
         abort(404)
     req = request.get_json()
-    if req is None or type(req) != dict:
-        return jsonify(error="Not a JSON"), 400
+    if not req:
+        abort(400, "Not a JSON")
     if "name" not in req:
-        return jsonify(error="Missing name"), 400
-    req["state_id"] = state_id
-    city = City(**req)
-    storage.new(city)
+        abort("Missing name", 400)
+    n_city = City(**req)
+    n_city.state_id = state_id
+    storage.new(n_city)
     storage.save()
-    resp = make_response(city.to_dict(), 201)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+    return jsonify(n_city.to_dict()), 201
+
+
+@app_views.route('/cities/<city_id>', methods=['PUT'])
+def update_city(city_id):
+    """
+    Update the city given by city_id
+    returns error if there is no name or if request is not a proper dict
+    """
+    req = request.get_json()
+    if not req:
+        abort(400, "Not a JSON")
+    city = storage.get(City, city_id)
+    if city is None:
+        abort(404)
+    for key in req.keys():
+        setattr(city, key, req[key])
+    storage.save()
+    return jsonify(city.to_dict()), 200
