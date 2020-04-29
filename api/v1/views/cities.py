@@ -25,14 +25,11 @@ def cities(state_id):
     for key, city in cities.items():
         if city.state_id == state_id:
             cities_list.append(city.to_dict())
-    try:
-        response = make_response(json.dumps(cities_list,
-                                            indent=2,
-                                            sort_keys=True), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    except Exception as e:
-        print(e)
+    response = make_response(json.dumps(cities_list,
+                                        indent=2,
+                                        sort_keys=True), 200)
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'])
