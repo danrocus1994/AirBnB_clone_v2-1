@@ -64,7 +64,7 @@ def create_amenity():
     """
     if request.is_json:
         req = request.get_json()
-        if req['name']:
+        if 'name' in req:
             new_amenity = Amenity(**req)
             storage.new(new_amenity)
             storage.save()
