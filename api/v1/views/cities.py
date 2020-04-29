@@ -12,7 +12,7 @@ from flask import jsonify, make_response, request, abort
 import json
 
 
-@app_views.route('/states/<state_id>/cities',
+@app_views.route("/states/<state_id>/cities",
                  strict_slashes=False,
                  methods=['GET'])
 def cities(state_id):
@@ -25,7 +25,7 @@ def cities(state_id):
     return jsonify([cit.to_dict() for cit in state_obj.cities])
 
 
-@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
+@app_views.route("/cities/<city_id>", strict_slashes=False, methods=['GET'])
 def single_city(city_id):
     """
     Return the Json of a City by its id
@@ -33,10 +33,10 @@ def single_city(city_id):
     citi = storage.get(City, city_id)
     if citi is None:
         abort(404)
-    return jsonify(city.to_dict())
+    return jsonify(citi.to_dict())
 
 
-@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['DELETE'])
+@app_views.route("/cities/<city_id>", strict_slashes=False, methods=['DELETE'])
 def remove_city(city_id):
     """
     Handles the State remotion route,
@@ -46,10 +46,11 @@ def remove_city(city_id):
     if citi is None:
         abort(404)
     storage.delete(citi)
+    storage.save()
     return jsonify({}), 200
 
 
-@app_views.route('/states/<state_id>/cities',
+@app_views.route("/states/<state_id>/cities",
                  strict_slashes=False,
                  methods=['POST'])
 def create_city(state_id):
@@ -72,7 +73,7 @@ def create_city(state_id):
     return jsonify(n_city.to_dict()), 201
 
 
-@app_views.route('/cities/<city_id>', methods=['PUT'])
+@app_views.route("/cities/<city_id>", methods=['PUT'])
 def update_city(city_id):
     """
     Update the city given by city_id
