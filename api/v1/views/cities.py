@@ -32,11 +32,8 @@ def single_city(city_id):
     """
     city = storage.get(City, city_id)
     if city is None:
-        return jsonify(error="Not found"), 404
-    city = city.to_dict()
-    resp = make_response(city, 200)
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+        abort(404)
+    return jsonify(city.to_dict())
 
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['DELETE'])
