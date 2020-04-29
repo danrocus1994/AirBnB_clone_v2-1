@@ -8,7 +8,7 @@ from models import storage
 from models.state import State
 from models.city import City
 from api.v1.views import app_views
-from flask import jsonify, Response, abort, request
+from flask import jsonify, make_response, abort, request
 import json
 
 
@@ -25,8 +25,14 @@ def cities(state_id):
     for key, city in cities.items():
         if city.state_id == state_id:
             cities_list.append(city.to_dict())
-    return Response(json.dumps(cities_list, indent=2, sort_keys=True), 200,
-                    mimetype='application/json')
+    try:
+        response = make_response(json.dumps(cities_list,
+                                            indent=2,
+                                            sort_keys=True), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    except Exception as e:
+        print(e)
 
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'])
@@ -40,5 +46,8 @@ def remove_city(city_id):
         abort(404)
     storage.delete(city)
     storage.save()
-    return Response(json.dumps({}, indent=2, sort_keys=True), 200,
-                    mimetype='application/json')
+    resp = make_response(json.dumps({}, indent=2, sort_keys=True),
+                         200,
+                         headers={"Content-Type": "application/json"})
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
