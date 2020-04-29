@@ -33,11 +33,8 @@ def single_city(city_id):
     """
     Return the Json of a City by its id
     """
-    print(city_id)
     city = storage.get(City, city_id)
-    print(city)
     if city is None:
-        print("City is None")
         abort(404)
     city = city.to_dict()
     return Response(json.dumps(city, indent=2, sort_keys=True), 200,
@@ -50,9 +47,7 @@ def remove_city(city_id):
     Handles the State removtion route,
     takes and id and uses storage to remove it
     """
-    print("Delete ", city_id)
     city = storage.get(City, city_id)
-    print(city)
     if city is None:
         abort(404)
     storage.delete(city)
@@ -67,8 +62,11 @@ def create_city(state_id):
     Creates a new city in the State
     given by state_id
     """
+    state = storage.get(State, state_id)
+    if state is None:
+        abort(404)
     req = request.get_json()
-    if req is None:
+    if req is None or type(req) != dict:
         return jsonify(error="Not a JSON"), 400
     if not "name" in req:
         return jsonify(error="Missing name"), 404
@@ -88,18 +86,17 @@ def update_city(city_id):
     Update the city given by city_id
     returns error if there is no name or if request is not a proper dict
     """
-    req = request.get_json()
-    if req is None:
-        return jsonify(error="Not a JSON"), 400
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
+    req = request.get_json()
+    if req is None or type(req) != dict:
+        return jsonify(error="Not a JSON"), 400
     try:
         for key in req.keys():
             avoid = [key != "id",
                      key != "state_id",
-                     key != "updated_at",
-                     key in city.to_dict()
+                     key != "updated_at"
                      ]
             if all(avoid):
                 setattr(city, key, req[key])
@@ -107,16 +104,4 @@ def update_city(city_id):
         abort(404)
     storage.save()
     return Response(json.dumps(city.to_dict(), indent=2, sort_keys=True), 200,
-                    mimetype='application/json')
-
-
-@app_views.route('/states/<state_id>', methods=['DELETE'])
-def remove_state(state_id):
-    """
-    Handles the State remotion route,
-    takes and id and uses storage to remove it
-    """
-    print("Delete ", state_id)
-    storage.delete(storage.get(state_id))
-    return Response(json.dumps({}, indent=2, sort_keys=True), 200,
                     mimetype='application/json')
