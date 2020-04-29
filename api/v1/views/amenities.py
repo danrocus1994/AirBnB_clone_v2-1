@@ -51,7 +51,7 @@ def del_amenity(amenity_id):
         return jsonify(error="Not found"), 404
     storage.delete(amenity)
     storage.save()
-    return {}, 200
+    return jsonify({}), 200
 
 
 @app_views.route('/amenities',
