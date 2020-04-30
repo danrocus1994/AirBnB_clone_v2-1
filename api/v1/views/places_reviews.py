@@ -76,7 +76,7 @@ def post_review(place_id):
     return jsonify(review.to_dict()), 201
 
 @app_views.route("/reviews/<review_id>", methods=['PUT'])
-def delete_review(review_id):
+def update_review(review_id):
     """
     Deletes a review by a given id
     @review_id of the review to return
