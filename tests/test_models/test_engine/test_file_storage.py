@@ -42,8 +42,8 @@ class TestFileStorageDocs(unittest.TestCase):
         pep8s = pep8.StyleGuide(quiet=True)
         result = pep8s.check_files(['tests/test_models/test_engine/\
 test_file_storage.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+        self.assertEqual(result.total_errors,
+                         0, "Found code style errors (and warnings).")
 
     def test_file_storage_module_docstring(self):
         """Test for the file_storage.py module docstring"""
@@ -113,3 +113,45 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """
+        Test the get() function
+        creates a new object of any class
+        and checks if the object saves corectly
+        """
+        state = State()
+        state.name = "Fictional state"
+        storage = FileStorage()
+        storage.new(state)
+        storage.save()
+        self.assertEqual(storage.get(State, state.id), state)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_none(self):
+        """
+        Test the get() function when no id is given
+        """
+        storage = FileStorage()
+        self.assertEqual(storage.get(State, "1234"), None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_by_object(self):
+        """
+        Test the count() function when cls is given
+        """
+        state = State()
+        state.name = "Fictional state"
+        storage = FileStorage()
+        storage.new(state)
+        storage.save()
+        self.assertTrue(storage.count(State) > 0)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_all(self):
+        """
+        Test the count() function when no cls is given
+        """
+        storage = FileStorage()
+        self.assertTrue(storage.count() > 0)
