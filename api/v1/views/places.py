@@ -25,7 +25,7 @@ def places(city_id):
     places = city.places
     places_list = []
     for place in places:
-        places_list = place.to_dict()
+        places_list.append(place.to_dict())
     return jsonify(places_list), 200
 
 
@@ -69,11 +69,11 @@ def create_place(city_id):
     Require at least name and user_id
     Return the new Place object
     """
-    if request.is_json:
+    req = request.get_json()
+    if req:
         city = storage.get(City, city_id)
         if city is None:
             return jsonify(error="Not found"), 404
-        req = request.get_json()
         if 'user_id' in req:
             user = storage.get(User, req['user_id'])
             if user is None:
@@ -102,12 +102,10 @@ def update_place(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         return jsonify(error="Not found"), 404
-    if request.is_json is None:
-        return jsonify(error="Not a JSON"), 400
     req = request.get_json()
+    if req is None:
+        return jsonify(error="Not a JSON"), 400
     for key, value in req.items():
-        if key != "id" and key != 'created_at' and key != 'updated_at'\
-           and key != 'user_id' and key != 'city_id':
-            setattr(place, key, value)
+        setattr(place, key, value)
     storage.save()
     return jsonify(place.to_dict()), 200
