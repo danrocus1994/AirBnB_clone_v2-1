@@ -154,4 +154,12 @@ class TestFileStorage(unittest.TestCase):
         Test the count() function when no cls is given
         """
         storage = FileStorage()
-        self.assertTrue(storage.count() > 0)
+        old = storage.count()
+        self.assertTrue(old >= 0)
+        state = State()
+        storage.new(state)
+        storage.save()
+        self.assertTrue(storage.count() == old + 1)
+        storage.delete(state)
+        storage.save()
+        self.assertTrue(storage.count() == old)
