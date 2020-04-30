@@ -86,3 +86,53 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get(self):
+        """
+        Test the get() function
+        creates a new object of any class
+        and checks if the object saves corectly
+        """
+        state = State()
+        state.name = "Fictional state"
+        storage = DBStorage()
+        storage.new(state)
+        storage.save()
+        self.assertEqual(storage.get(State, state.id), state)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_none(self):
+        """
+        Test the get() function when no id is given
+        """
+        storage = DBStorage()
+        self.assertEqual(storage.get(State, "1234"), None)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_by_object(self):
+        """
+        Test the count() function when cls is given
+        """
+        state = State()
+        state.name = "Fictional state"
+        storage = DBStorage()
+        storage.new(state)
+        storage.save()
+        self.assertTrue(storage.count(State) > 0)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_all(self):
+        """
+        Test the count() function when no cls is given
+        """
+        storage = DBStorage()
+        old = storage.count()
+        self.assertTrue(old >= 0)
+        state = State()
+        storage.new(state)
+        storage.save()
+        self.assertTrue(storage.count() == old + 1)
+        storage.delete(state)
+        storage.save()
+        self.assertTrue(storage.count() == old)
