@@ -78,14 +78,17 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
+        self.assertTrue(True)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
+        self.assertTrue(True)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+        self.assertTrue(True)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_get(self):
@@ -96,19 +99,21 @@ class TestFileStorage(unittest.TestCase):
         """
         state = State()
         state.name = "Fictional state"
-        storage = DBStorage()
+        storage = models.storage
         storage.new(state)
         storage.save()
         self.assertTrue(storage.get(State, state.id))
         self.assertEqual(storage.get(State, state.id), state)
+        storage.close()
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_get_none(self):
         """
         Test the get() function when no id is given
         """
-        storage = DBStorage()
+        storage = models.storage
         self.assertEqual(storage.get(State, "1234"), None)
+        storage.close()
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_count_by_object(self):
@@ -117,23 +122,26 @@ class TestFileStorage(unittest.TestCase):
         """
         state = State()
         state.name = "Fictional state"
-        storage = DBStorage()
+        storage = models.storage
         storage.new(state)
         storage.save()
         self.assertTrue(storage.count(State) > 0)
+        storage.close()
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_count_all(self):
         """
         Test the count() function when no cls is given
         """
-        storage = DBStorage()
+        storage = models.storage
         old = storage.count()
         self.assertTrue(old >= 0)
         state = State()
+        state.name = "maritza"
         storage.new(state)
         storage.save()
         self.assertTrue(storage.count() == old + 1)
         storage.delete(state)
         storage.save()
         self.assertTrue(storage.count() == old)
+        storage.close()
