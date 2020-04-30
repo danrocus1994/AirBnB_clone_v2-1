@@ -62,8 +62,8 @@ def create_amenity():
     This route create a new amenity
     Require at least name
     """
-    if request.is_json:
-        req = request.get_json()
+    req = request.get_json()
+    if req:
         if 'name' in req:
             new_amenity = Amenity(**req)
             storage.new(new_amenity)
@@ -85,11 +85,10 @@ def update_amenity(amenity_id):
     amenity = storage.get(Amenity, amenity_id)
     if amenity is None:
         return jsonify(error="Not found"), 404
-    if request.is_json is None:
-        return jsonify(error="Not a JSON"), 400
     req = request.get_json()
+    if req is None:
+        return jsonify(error="Not a JSON"), 400
     for key, value in req.items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at':
             setattr(amenity, key, value)
     storage.save()
     return jsonify(amenity.to_dict()), 200

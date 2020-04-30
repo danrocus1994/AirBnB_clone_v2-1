@@ -81,8 +81,8 @@ def create_place(city_id):
         else:
             return jsonify(error="Missing user_id"), 400
         if 'name' in req:
-            req['city_id'] = city_id
             new_place = Place(**req)
+            new_place.city_id = city_id
             storage.new(new_place)
             storage.save()
             return jsonify(new_place.to_dict()), 201

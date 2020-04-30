@@ -62,8 +62,8 @@ def create_state():
     This route create a new state
     Require at least name
     """
-    if request.is_json:
-        req = request.get_json()
+    req = request.get_json()
+    if req:
         if 'name' in req:
             new_state = State(**req)
             storage.new(new_state)
@@ -84,11 +84,10 @@ def update_state(state_id):
     state = storage.get(State, state_id)
     if state is None:
         return jsonify(error="Not found"), 404
-    if request.is_json is None:
-        return jsonify(error="Not a JSON"), 400
     req = request.get_json()
+    if req is None:
+        return jsonify(error="Not a JSON"), 400
     for key, value in req.items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at':
             setattr(state, key, value)
     storage.save()
     return jsonify(state.to_dict()), 200
