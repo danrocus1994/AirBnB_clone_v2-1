@@ -74,6 +74,3 @@ def post_review(place_id):
     storage.new(review)
     storage.save()
     return jsonify(review.to_dict())
-
-
-
