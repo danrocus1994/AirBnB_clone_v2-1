@@ -95,4 +95,4 @@ def update_review(review_id):
     for key in req.keys():
         setattr(review, key, req[key])
     storage.save()
-    return jsonify(revire.to_dict()), 200
+    return jsonify(review.to_dict()), 200
