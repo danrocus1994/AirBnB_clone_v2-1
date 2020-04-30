@@ -73,4 +73,21 @@ def post_review(place_id):
     review.place_id = place_id
     storage.new(review)
     storage.save()
-    return jsonify(review.to_dict())
+    return jsonify(review.to_dict()), 201
+
+@app_views.route("/reviews/<review_id>", methods=['PUT'])
+def delete_review(review_id):
+    """
+    Deletes a review by a given id
+    @review_id of the review to return
+    """
+    review = storage.get(Review, review_id)
+    if review is None:
+        abort(404)
+    req = request.get_json()
+    if req is None or type(req) != dict:
+        return jsonify(error="Not a JSON"), 400
+    for key in req.keys():
+        setattr(review, key, req[key])
+    storage.save()
+    return jsonify(revire.to_dict()), 200
