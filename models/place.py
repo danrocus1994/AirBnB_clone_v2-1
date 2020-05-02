@@ -72,7 +72,7 @@ class Place(BaseModel, Base):
             """Return list of reviews by an specific place
             """
             revs = []
-            for rev in self.reviews:
+            for rev in models.storage.all(Review).values():
                 if rev.place_id == self.id:
                     revs.append(rev)
             return revs
