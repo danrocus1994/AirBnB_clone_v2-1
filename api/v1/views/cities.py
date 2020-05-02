@@ -18,6 +18,7 @@ def cities(state_id):
     """
     This route return a list of cities given by the status id
     """
+    storage_t = type(storage).__name__
     state_obj = storage.get(State, state_id)
     if state_obj is not None:
         return jsonify([cit.to_dict() for cit in state_obj.cities])

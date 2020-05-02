@@ -15,17 +15,19 @@ import json
 @app_views.route('/cities/<city_id>/places',
                  strict_slashes=False,
                  methods=['GET'])
-def places(city_id):
+def get_places(city_id):
     """
     This route retrieves the list of all place objects of a city
     """
     city = storage.get(City, city_id)
     if city is None:
         return jsonify(error="Not found"), 404
+    print(city.places)
     places = city.places
     places_list = []
-    for place in places:
-        places_list.append(place.to_dict())
+    if places is not None:
+        for place in places:
+            places_list.append(place.to_dict())
     return jsonify(places_list), 200
 
 
@@ -69,6 +71,7 @@ def create_place(city_id):
     Require at least name and user_id
     Return the new Place object
     """
+    storage_t = type(storage).__name__
     req = request.get_json()
     if req:
         city = storage.get(City, city_id)
@@ -83,6 +86,8 @@ def create_place(city_id):
         if 'name' in req:
             new_place = Place(**req)
             new_place.city_id = city_id
+            if storage_t != "DBStorage":
+                city.places_ids.append(new_place.id)
             storage.new(new_place)
             storage.save()
             return jsonify(new_place.to_dict()), 201
