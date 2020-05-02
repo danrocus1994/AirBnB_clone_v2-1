@@ -23,7 +23,6 @@ def get_amenities(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    print(storage_t)
     if storage_t == "DBStorage":
         return jsonify([am.to_dict() for am in place.amenities])
     else:
@@ -96,9 +95,6 @@ def link_amenity_to_place(place_id, amenity_id):
         abort(404)
     if storage_t == "DBStorage":
         amenities = place.amenities
-        for pl in amenity.place_amenities:
-            if pl.id == place_id:
-                print("Linked to amenity")
         for am in amenities:
             if am.id == amenity_id:
                 return jsonify(amenity.to_dict()), 200
@@ -113,5 +109,4 @@ def link_amenity_to_place(place_id, amenity_id):
         amenity.place_id.append(place.id)
         amenity.save()
         storage.save()
-        print("Not in place")
         return jsonify(amenity.to_dict()), 201
