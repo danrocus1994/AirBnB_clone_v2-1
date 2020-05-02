@@ -32,14 +32,7 @@ class BaseModel:
         if kwargs:
             for key, value in kwargs.items():
                 if key != "__class__":
-                    try:
-                        if type(value) == list:
-                            setattr(self, key, [it for it in value])
-                        elif type(value) is not None:
-                            setattr(self, key, value)
-                    except Exception as e:
-                        # print(e, e.args, key, value, type(value))
-                        pass
+                    setattr(self, key, value)
             if kwargs.get("created_at", None) and type(self.created_at) is str:
                 self.created_at = datetime.strptime(kwargs["created_at"], time)
             else:
@@ -69,17 +62,7 @@ class BaseModel:
     def to_dict(self):
         """returns a dictionary containing all keys/values of the instance"""
         # print("to dict:\n\t", dir(self))
-
-        new_dict = {}
-        for key in dir(self):
-            conds = [key[:2] != '__',
-                     key != 'save',
-                     key != 'delete',
-                     key != 'to_dict'
-                     ]
-            if all(conds):
-                value = eval("self.{}".format(key))
-                new_dict[key] = value
+        new_dict = self.__dict__.copy()
         if "created_at" in new_dict:
             new_dict["created_at"] = new_dict["created_at"].strftime(time)
         if "updated_at" in new_dict:
@@ -87,10 +70,28 @@ class BaseModel:
         new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
-        pla = "place_amenities"
-        if pla in new_dict:
-            del new_dict[pla]
         return new_dict
+        # new_dict = {}
+        # for key in dir(self):
+        #     conds = [key[:2] != '__',
+        #              key != 'save',
+        #              key != 'delete',
+        #              key != 'to_dict'
+        #              ]
+        #     if all(conds):
+        #         value = eval("self.{}".format(key))
+        #         new_dict[key] = value
+        # if "created_at" in new_dict:
+        #     new_dict["created_at"] = new_dict["created_at"].strftime(time)
+        # if "updated_at" in new_dict:
+        #     new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
+        # new_dict["__class__"] = self.__class__.__name__
+        # if "_sa_instance_state" in new_dict:
+        #     del new_dict["_sa_instance_state"]
+        # pla = "place_amenities"
+        # if pla in new_dict:
+        #     del new_dict[pla]
+        # return new_dict
 
     def delete(self):
         """delete the current instance from the storage"""
