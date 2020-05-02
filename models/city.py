@@ -2,6 +2,7 @@
 """ holds class City"""
 import models
 from models.base_model import BaseModel, Base
+from models.place import Place
 from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String, ForeignKey
@@ -18,6 +19,21 @@ class City(BaseModel, Base):
     else:
         state_id = ""
         name = ""
+        places_ids = []
+
+        @property
+        def places(self):
+            """
+            Gets all places related to the city
+            """
+            plcs = []
+            for place_id in self.places_ids:
+                place = models.storage.get(Place, place_id)
+                if place is not None:
+                    plcs.append(place)
+            if len(plcs) == 0:
+                return None
+            return plcs
 
     def __init__(self, *args, **kwargs):
         """initializes city"""
