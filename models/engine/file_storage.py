@@ -54,6 +54,7 @@ class FileStorage:
             with open(self.__file_path, 'r') as f:
                 content = f.read()
                 jo = json.loads(content)
+                # print(jo)
             for key in jo.keys():
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
         except:

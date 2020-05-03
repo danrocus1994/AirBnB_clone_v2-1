@@ -32,7 +32,14 @@ class BaseModel:
         if kwargs:
             for key, value in kwargs.items():
                 if key != "__class__":
-                    setattr(self, key, value)
+                    try:
+                        setattr(self, key, value)
+                    except:
+                        try:
+                            if type(value) == list:
+                                setattr(self, key, [v for v in value])
+                        except:
+                            pass
             if kwargs.get("created_at", None) and type(self.created_at) is str:
                 self.created_at = datetime.strptime(kwargs["created_at"], time)
             else:
@@ -70,6 +77,9 @@ class BaseModel:
         new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
+        if type(models.storage).__name__ != "FileStorage":
+            if "password" in new_dict:
+                del new_dict["password"]
         return new_dict
         # new_dict = {}
         # for key in dir(self):
