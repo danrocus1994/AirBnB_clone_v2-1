@@ -199,6 +199,8 @@ def retrieve_search():
         print("\033[31mFiltered by Amenities\033[0m")
         for pl in f_places:
             print_place(pl, "Obj")
+        all_places = storage.all(Place)
+        f_places.extend(filter_by_amenities(all_places.values(), amenities))
     resp = []
     for pl in f_places:
         dic = pl.to_dict()
