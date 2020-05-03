@@ -6,9 +6,10 @@ Place route for AirBnB clone v3 API v1
 from models import storage
 from models.city import City
 from models.place import Place
+from models.state import State
 from models.user import User
 from api.v1.views import app_views
-from flask import jsonify, make_response, abort, request
+from flask import jsonify, make_response, abort, request, Response
 import json
 
 
@@ -114,3 +115,96 @@ def update_place(place_id):
         setattr(place, key, value)
     storage.save()
     return jsonify(place.to_dict()), 200
+
+
+def print_place(place, typo):
+    """
+    Prints a Place Obj
+    """
+    if typo == "json":
+        print('\n\033[33m', place["name"],
+              '\n\t\033[34m',
+              place["id"], '\033[0m')
+    else:
+        print('\n\033[33m', place.name, '\n\t\033[34m', place.id, '\033[0m\n')
+        # , [am.name for am in place.amenities])
+
+
+def filter_by_amenities(places, amenities):
+    filtered_places = []
+    for place in places:
+        pl_amens = [am.id for am in place.amenities]
+        append = True
+        for am in amenities:
+            if am not in pl_amens:
+                append = False
+        if append:
+            filtered_places.append(place)
+    return filtered_places
+
+
+@app_views.route("/places_search", methods=['POST'])
+def retrieve_search():
+    """
+    Return a list of places linked to the request data
+    all cities in state and containing all amenities
+    """
+    js = request.get_json()
+    if js is None or type(js) != dict:
+        return jsonify(error="Not a JSON"), 400
+    states = js["states"] if "states" in js else []
+    cities = js["cities"] if "cities" in js else []
+    amenities = js["amenities"] if "amenities" in js else []
+    conds = [
+                True if len(states) == 0 else False,
+                True if len(cities) == 0 else False,
+                True if len(amenities) == 0 else False
+    ]
+    print(conds)
+    if all(conds):
+        print("return all places")
+        places = storage.all(Place)
+        all_places = []
+        for place in places.values():
+            all_places.append(place)
+        return Response(json.dumps(all_places, indent=2),
+                        200,
+                        mimetype="application/json")
+    s_places = []
+    if len(states) > 0:
+        for st_id in states:
+            st = storage.get(State, st_id)
+            if st is not None:
+                for ci in st.cities:
+                    for pla in ci.places:
+                        s_places.append(pla)
+    c_places = []
+    if len(cities) > 0:
+        for ci_id in cities:
+            ci = storage.get(City, ci_id)
+            if ci is not None:
+                for pl in ci.places:
+                    c_places.append(pl)
+    f_places = []
+    f_places.extend(s_places)
+    f_places.extend(c_places)
+    print("\033[31mStates Places\033[0m")
+    for pl in s_places:
+        print_place(pl, "Obj")
+    print("\033[31mCities Places\033[0m")
+    for pl in c_places:
+        print_place(pl, "Obj")
+    if len(amenities) > 0:
+        f_places = filter_by_amenities(f_places, amenities)
+        print("\033[31mFiltered by Amenities\033[0m")
+        for pl in f_places:
+            print_place(pl, "Obj")
+    resp = []
+    for pl in f_places:
+        dic = pl.to_dict()
+        if "amenities" in dic:
+            del dic["amenities"]
+        resp.append(dic)
+    return Response(json.dumps(resp, indent=2),
+                    200,
+                    mimetype="application/json")
