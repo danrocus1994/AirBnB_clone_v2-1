@@ -17,7 +17,7 @@ def get_all_users():
     Returns the JSON representation for each User
     """
     users = storage.all(User)
-    print(users)
+    # print(users)
     return jsonify([us.to_dict() for key, us in users.items()])
 
 

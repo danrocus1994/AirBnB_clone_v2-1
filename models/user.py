@@ -25,6 +25,10 @@ class User(BaseModel, Base):
         first_name = ""
         last_name = ""
 
+    def __init__(self, *args, **kwargs):
+        """initializes user"""
+        super().__init__(*args, **kwargs)
+
     def save(self):
         """
         Pass the user password to md5 and call super().save()
