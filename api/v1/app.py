@@ -6,13 +6,14 @@ Flask Application server with view Blueprint
 
 from models import storage
 from api.v1.views import app_views
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
+app.register_blueprint(app_views)
 
 
 @app.errorhandler(404)
@@ -21,6 +22,8 @@ def page_not_found(e):
     Defines not found json response
     """
     print("Handling Error")
+    print(request)
+    print(dir(resquest))
     return jsonify(error="Not found"), 404
 
 
@@ -31,7 +34,6 @@ def teardown_db(exception):
 
 
 if __name__ == '__main__':
-    app.register_blueprint(app_views)
     host = os.getenv("HBNB_API_HOST")
     print(type(host), host)
     port = os.getenv("HBNB_API_PORT")

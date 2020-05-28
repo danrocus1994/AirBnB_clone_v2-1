@@ -6,8 +6,9 @@ States route for AirBnB clone v3 API v1
 from models import storage
 from models.state import State
 from api.v1.views import app_views
-from flask import jsonify, make_response, abort, request
+from flask import jsonify, make_response, abort, request, Response
 import json
+import traceback, sys
 
 
 @app_views.route('/states',
@@ -17,11 +18,20 @@ def states():
     """
     This route retrieves the list of all State objects
     """
-    states = storage.all(State)
-    states_list = []
-    for state in states.values():
-        states_list.append(state.to_dict())
-    return jsonify(states_list), 200
+    try:
+        states = storage.all(State)
+        states_list = []
+        for state in states.values():
+            states_list.append(state.to_dict())
+        # print(json.dumps(states_list, indent=2))
+        return Response(json.dumps(states_list), mimetype='application/json')
+        # states_list = json.loads(json.dumps(states_list))
+        # return jsonify(states_list)
+    except Exception as e:
+        print(e)
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        traceback.print_exception(exc_type, exc_value, exc_tb)
+        return jsonify(error="Not found"), 404
 
 
 @app_views.route('/states/<state_id>',

@@ -29,7 +29,8 @@ def get_places(city_id):
     if places is not None:
         for place in places:
             places_list.append(place.to_dict())
-    return jsonify(places_list), 200
+    return Response(json.dumps(places_list), mimetype='application/json')
+    # return jsonify(places_list), 200
 
 
 @app_views.route('/places/<place_id>',

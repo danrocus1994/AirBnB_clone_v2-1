@@ -6,7 +6,7 @@ Amenities route for AirBnB clone v3 API v1
 from models import storage
 from models.amenity import Amenity
 from api.v1.views import app_views
-from flask import jsonify, make_response, abort, request
+from flask import jsonify, make_response, abort, request, Response
 import json
 
 
@@ -21,7 +21,8 @@ def amenities():
     amenities_list = []
     for amenity in amenities.values():
         amenities_list.append(amenity.to_dict())
-    return jsonify(amenities_list), 200
+    return Response(json.dumps(amenities_list),
+                    mimetype='application/json')
 
 
 @app_views.route('/amenities/<amenity_id>',

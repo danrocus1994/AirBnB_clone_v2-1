@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Index route for AirBnB clone v3 API v1
+cities routes for AirBnB clone v3 API v1
 """
 
 
@@ -8,7 +8,8 @@ from api.v1.views import app_views
 from models import storage
 from models.city import City
 from models.state import State
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, Response
+import json
 
 
 @app_views.route("/states/<state_id>/cities",
@@ -18,11 +19,15 @@ def cities(state_id):
     """
     This route return a list of cities given by the status id
     """
-    storage_t = type(storage).__name__
-    state_obj = storage.get(State, state_id)
-    if state_obj is not None:
-        return jsonify([cit.to_dict() for cit in state_obj.cities])
-    abort(404)
+    try:
+        state_obj = storage.get(State, state_id)
+        print(state_obj)
+        if state_obj is not None:
+            return Response(json.dumps([cit.to_dict() for cit in state_obj.cities]),
+                            mimetype='application/json')
+        abort(404)
+    except Exception as e:
+        abort(404)
 
 
 @app_views.route("/cities/<city_id>", strict_slashes=False, methods=['GET'])
@@ -30,10 +35,13 @@ def single_city(city_id):
     """
     Return the Json of a City by its id
     """
-    citi = storage.get(City, city_id)
-    if citi is not None:
-        return jsonify(citi.to_dict())
-    abort(404)
+    try:
+        citi = storage.get(City, city_id)
+        if citi is not None:
+            return Response(json.dumps(citi.to_dict()), mimetype='application/json')
+        abort(404)
+    except Exception as e:
+        print(e)
 
 
 @app_views.route("/cities/<city_id>", strict_slashes=False, methods=['DELETE'])

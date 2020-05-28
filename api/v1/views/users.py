@@ -8,7 +8,8 @@ from api.v1.views import app_views
 from models import storage
 from models.user import User
 from models.state import State
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, Response
+import json
 
 
 @app_views.route("/users", methods=['GET'])
@@ -18,8 +19,9 @@ def get_all_users():
     """
     users = storage.all(User)
     # print(users)
-    return jsonify([us.to_dict() for key, us in users.items()])
-
+    # return jsonify([us.to_dict() for key, us in users.items()])
+    r = [us.to_dict() for key, us in users.items()]
+    return Response(json.dumps(r), mimetype='application/json')
 
 @app_views.route("/users/<user_id>", methods=['GET'])
 def get_one_user(user_id):
